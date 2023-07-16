@@ -4,7 +4,9 @@ waitUntil { !isNull findDisplay 46 };
 
 private _display = findDisplay 46;
 _display displayAddEventHandler ["KeyDown", {
-	if ( isNull (findDisplay 602) && {_this # 1 == 46 && {isNull (localNamespace  getVariable ['animHUD_display', displayNull]) } } ) then {
+	if (
+		isNull (findDisplay 602) && {_this # 1 == 46 && {isNull(localNamespace  getVariable ['animHUD_display', displayNull])}}
+	) then {
 		call animHUD;
 	};
 }];
@@ -45,14 +47,14 @@ animHUD = {
 	_items = localNamespace getVariable "animHUD_items";
 	
 	// остальные элементы
-	//_ctrl = _items # 0 # 0 # 0;
-	for "_i" from 1 to 1/*4*/ do {
+	_ctrl = _items # 0 # 0 # 0;
+	for "_i" from 1 to 4 do {
 		[1] call animHUD_createItem;
 	};
-	//_ctrl = _items # 1 # 0 # 0;
-	//for "_i" from 1 to 36 do {
-	//	[2] call animHUD_createItem;
-	//};
+	_ctrl = _items # 1 # 0 # 0;
+	for "_i" from 1 to 36 do {
+		[2] call animHUD_createItem;
+	};
 
 	[] spawn animHUD_setItemsData; // функционал элементов (кто надо становится видимым, другие скрываются)
 };
@@ -64,14 +66,14 @@ animHUD_createItem = {
 
 	private _display = localNamespace getVariable "animHUD_display";
 	private _items = localNamespace getVariable "animHUD_items";
-	private _ctrl_bg = _display ctrlCreate ["RscPicture", -1];
-	private _ctrl_text = _display ctrlCreate ["RscStructuredText", -1];
+	private _ctrl = _display ctrlCreate ["RscPicture", -1];
+	private _ctrl2 = _display ctrlCreate ["RscStructuredText", -1];
 
 	call {
 		// центральный элемент
 		if (_lvl == 0) exitWith {
 			_ctrlWidth = 0.1 * safeZoneW;
-			_ctrlHeigth = _ctrlWidth;// * (safeZoneW/safeZoneH);
+			_ctrlHeigth = _ctrlWidth * (safeZoneW/safeZoneH);
 			_ctrlParentHeigth = 0;
 			_ctrlX = (safeZoneW - _ctrlWidth) / 2 + safeZoneX;
 			_ctrlY = (safeZoneH -  _ctrlHeigth) / 2 + safeZoneY;
@@ -236,27 +238,29 @@ animHUD_createItem = {
 		};
 	};
 
-	_ctrl_bg ctrlSetPosition [_ctrlX, _ctrlY, _ctrlWidth, _ctrlHeigth];
-	_ctrl_bg ctrlSetText _ctrlPicture;
-	_ctrl_bg ctrlSetFade 0.3;
-	_ctrl_bg ctrlCommit 0;
-	_ctrl_bg ctrlSetAngle [_ctrlAngle, 0.5, 0.5];
+	// сам элемент
+	_ctrl ctrlSetPosition [_ctrlX, _ctrlY, _ctrlWidth, _ctrlHeigth];
+	_ctrl ctrlSetText _ctrlPicture;
+	_ctrl ctrlSetFade 0.3;
+	_ctrl ctrlCommit 0;
+	_ctrl ctrlSetAngle [_ctrlAngle, 0.5, 0.5];
 
-	_ctrl_text ctrlSetPosition [_ctrl2X, _ctrl2Y, _ctrl2Width, _ctrl2Heigth];
-	_ctrl_text ctrlSetStructuredText _ctrl2Text;
-	_ctrl_text ctrlSetFont "PuristaSemibold";
-	_ctrl_text ctrlCommit 0;
-	_ctrl_text ctrlSetAngle [_ctrlAngle, 0.5, 0.5];
+	// текст внутри элемента
+	_ctrl2 ctrlSetPosition [_ctrl2X, _ctrl2Y, _ctrl2Width, _ctrl2Heigth];
+	_ctrl2 ctrlSetStructuredText _ctrl2Text;
+	_ctrl2 ctrlSetFont "PuristaSemibold";
+	_ctrl2 ctrlCommit 0;
+	_ctrl2 ctrlSetAngle [_ctrlAngle, 0.5, 0.5];
 
 	// скрывание элементов
-	_ctrl_bg ctrlEnable false;
-	_ctrl_bg ctrlShow false;
-	_ctrl_text ctrlEnable false;
-	_ctrl_text ctrlShow false;
+	_ctrl ctrlEnable false;
+	_ctrl2 ctrlEnable false;
+	_ctrl ctrlShow false;
+	_ctrl2 ctrlShow false;
 
-	// добавление в общий массив менюшки массива элемента в виде [фон, текст]
+	// добавление элементов в общий массив
 	private _items = localNamespace getVariable ["animHUD_items", [[],[],[]]];
-	(_items # _lvl) pushBack [_ctrl_bg, _ctrl_text];
+	(_items # _lvl) pushBack [_ctrl, _ctrl2];
 	localNamespace setVariable ["animHUD_items", _items];
 };
 
