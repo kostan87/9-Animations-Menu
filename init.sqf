@@ -49,12 +49,10 @@ animHUD = {
 	_items = localNamespace getVariable "animHUD_items";
 	
 	// остальные элементы
-	//_ctrl = _items # 0 # 0 # 0;
 	for "_i" from 1 to 4 do {
 		[1] call animHUD_createItem;
 	};
 	/*
-	//_ctrl = _items # 1 # 0 # 0;
 	for "_i" from 1 to 36 do {
 		[2] call animHUD_createItem;
 	};
@@ -327,7 +325,7 @@ animHUD_setItemsData = {
 					_index = _index - 1;
 
 					{ (_x # 0) ctrlSetText "lvl2.paa"; } forEach (_items # 1); // снятие выделения
-					(_items # 1 # _index # 0) ctrlSetText "lvl2-selected.paa"; // выделение выбранной
+					(_items # 1 # _index # 0) ctrlSetText "2lvl2-selected.paa"; // выделение выбранной
 
 					// скрытие всех элементов анимок
 					{
@@ -353,7 +351,7 @@ animHUD_setItemsData = {
 				// элементы самих анимок
 				private "_section";
 				{
-					if (ctrlText (_x # 0) == "lvl2-selected.paa") then {
+					if (ctrlText (_x # 0) == "2lvl2-selected.paa") then {
 						_section = _forEachIndex;
 					};
 				} forEach (_items # 1);
