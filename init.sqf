@@ -397,6 +397,63 @@ animHUD_setItemsData = {
 	}];
 };
 
+animHUD_getNearestItemIndex = { // функция получения индекса ближайшего к мыши элемента на определённом уровне
+	private _items = localNamespace getVariable "animHUD_items";
+	private _distances = [];
+	{
+		{
+			_ctrl = _x # 0;
+			_ctrlPos = ctrlPosition _ctrl;
+			_ctrlPos = [_ctrlPos # 0, _ctrlPos # 1] vectorAdd [(_ctrlPos # 2) / 2, (_ctrlPos # 3) / 2];
+			_distance = _ctrlPos vectorDistance getMousePosition;
+			_distances pushBack _distance;
+		} foreach _x;
+	} foreach _items;
+	_itemIndex = _distances find (selectMin _distances);
+	_itemIndex;
+};
+
+animHUD_doWithoutWeapons = { // функция выполнения кода с удалением оружия у игрока
+	params ["_code", "_args"];
+	// сохранение данных
+	private _weapons = weaponsItems player;
+	private _magazines = magazinesAmmo player;
+	private _currentWeaponState = player weaponState (currentWeapon player);
+	
+	{ player removeMagazineGlobal (_x # 0) } forEach _magazines; // удаление магазинов
+	{ player removeWeapon (_x # 0) } forEach _weapons; // удаление оружия
+	
+	player switchAction "AmovPercMstpSnonWnonDnon"; // выход из ступора
+
+	private _handle = [_args] spawn _code; // выплонение кода
+	waitUntil {sleep 1; scriptDone _handle || {!(localNamespace getVariable "animHUD_animRun")}};
+
+	player switchAction "AmovPercMstpSnonWnonDnon";// выход из ступора
+	
+	{ player addWeapon (_x # 0) } forEach _weapons; // добавление оружия
+	{ player addMagazine (_x # 0) } forEach _magazines; // добавление магазинов
+
+	// удаление стоковых обвесов
+	removeAllPrimaryWeaponItems player; 
+	removeAllSecondaryWeaponItems player;
+	removeAllHandgunItems player;
+	
+	{ player addWeaponItem [_x, _x # 4 # 0, true] } forEach _weapons; // добавление магазинов оружию
+	
+	{ // установка обвесов оружию
+		private _weapon = _x # 0;
+		private _magazine = _x # 4;
+		if (count _magazine > 0) then {
+			player setAmmo [_weapon, _magazine # 1];
+		};
+		{
+			player addWeaponItem [_weapon, _x, true];
+		} forEach _x;
+	} forEach _weapons;
+	
+	player selectWeapon (_currentWeaponState select [0, 3]); // выбор сохраннёного оружия
+};
+
 animHUD_setItemAnim = {
 	params ["_ctrl3Data", "_index"];
 	
@@ -549,61 +606,4 @@ animHUD_setItemAnim = {
 	if (_index < 32) then {
 		_ctrl3Data ctrlSetTooltip ((localNamespace getVariable "animHUD_animsData") # _index # 0);
 	};
-};
-
-animHUD_getNearestItemIndex = { // функция получения индекса ближайшего к мыши элемента на определённом уровне
-	private _items = localNamespace getVariable "animHUD_items";
-	private _distances = [];
-	{
-		{
-			_ctrl = _x # 0;
-			_ctrlPos = ctrlPosition _ctrl;
-			_ctrlPos = [_ctrlPos # 0, _ctrlPos # 1] vectorAdd [(_ctrlPos # 2) / 2, (_ctrlPos # 3) / 2];
-			_distance = _ctrlPos vectorDistance getMousePosition;
-			_distances pushBack _distance;
-		} foreach _x;
-	} foreach _items;
-	_itemIndex = _distances find (selectMin _distances);
-	_itemIndex;
-};
-
-animHUD_doWithoutWeapons = { // функция выполнения кода с удалением оружия у игрока
-	params ["_code", "_args"];
-	// сохранение данных
-	private _weapons = weaponsItems player;
-	private _magazines = magazinesAmmo player;
-	private _currentWeaponState = player weaponState (currentWeapon player);
-	
-	{ player removeMagazineGlobal (_x # 0) } forEach _magazines; // удаление магазинов
-	{ player removeWeapon (_x # 0) } forEach _weapons; // удаление оружия
-	
-	player switchAction "AmovPercMstpSnonWnonDnon"; // выход из ступора
-
-	private _handle = [_args] spawn _code; // выплонение кода
-	waitUntil {sleep 1; scriptDone _handle || {!(localNamespace getVariable "animHUD_animRun")}};
-
-	player switchAction "AmovPercMstpSnonWnonDnon";// выход из ступора
-	
-	{ player addWeapon (_x # 0) } forEach _weapons; // добавление оружия
-	{ player addMagazine (_x # 0) } forEach _magazines; // добавление магазинов
-
-	// удаление стоковых обвесов
-	removeAllPrimaryWeaponItems player; 
-	removeAllSecondaryWeaponItems player;
-	removeAllHandgunItems player;
-	
-	{ player addWeaponItem [_x, _x # 4 # 0, true] } forEach _weapons; // добавление магазинов оружию
-	
-	{ // установка обвесов оружию
-		private _weapon = _x # 0;
-		private _magazine = _x # 4;
-		if (count _magazine > 0) then {
-			player setAmmo [_weapon, _magazine # 1];
-		};
-		{
-			player addWeaponItem [_weapon, _x, true];
-		} forEach _x;
-	} forEach _weapons;
-	
-	player selectWeapon (_currentWeaponState select [0, 3]); // выбор сохраннёного оружия
 };
