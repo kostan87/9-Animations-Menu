@@ -45,21 +45,23 @@ animHUD = {
 	_items = localNamespace getVariable "animHUD_items";
 	
 	// остальные элементы
+	/*
 	//_ctrl = _items # 0 # 0 # 0;
-	for "_i" from 1 to 1/*4*/ do {
+	for "_i" from 1 to 4 do {
 		[1] call animHUD_createItem;
 	};
 	//_ctrl = _items # 1 # 0 # 0;
-	//for "_i" from 1 to 36 do {
-	//	[2] call animHUD_createItem;
-	//};
+	for "_i" from 1 to 36 do {
+		[2] call animHUD_createItem;
+	};
+	*/
 
 	[] spawn animHUD_setItemsData; // функционал элементов (кто надо становится видимым, другие скрываются)
 };
 
 animHUD_createItem = {
 	params ["_lvl"];
-	private ["_ctrlWidth", "_ctrlHeigth", "_ctrlParentHeigth", "_ctrlX", "_ctrlY", "_ctrlPicture", "_ctrlAngle"];
+	private ["_ctrlWidth", "_ctrlHeigth", "_ctrlX", "_ctrlY", "_ctrlPicture", "_ctrlAngle"];
 	private ["_ctrl2Width", "_ctrl2Heigth", "_ctrl2X", "_ctrl2Y", "_ctrl2Text"];
 
 	private _display = localNamespace getVariable "animHUD_display";
@@ -71,8 +73,7 @@ animHUD_createItem = {
 		// центральный элемент
 		if (_lvl == 0) exitWith {
 			_ctrlWidth = 0.1 * safeZoneW;
-			_ctrlHeigth = _ctrlWidth;// * (safeZoneW/safeZoneH);
-			_ctrlParentHeigth = 0;
+			_ctrlHeigth = (0.1 * safeZoneH) * ((safeZoneW / pixelW) / (safeZoneH / pixelH));
 			_ctrlX = (safeZoneW - _ctrlWidth) / 2 + safeZoneX;
 			_ctrlY = (safeZoneH -  _ctrlHeigth) / 2 + safeZoneY;
 			_ctrlPicture = "lvl1.paa";
@@ -82,10 +83,10 @@ animHUD_createItem = {
 			_ctrl2X =_ctrlX;
 			_ctrl2Y = _ctrlY;
 
-			private _ctrlHeightInSFH = _ctrlHeigth / safeZoneH;
-			private _fontHeightInSFH = 1 / 30;
-			private _padding = (_ctrlHeightInSFH / _fontHeightInSFH) / 2 - 1;
-			_ctrl2 ctrlSetFontHeight (safeZoneH * _fontHeightInSFH);
+			private _ctrlHeight_in_safeZoneH = _ctrlHeigth / safeZoneH;
+			private _fontHeight_in_safeZoneH = 1 / 30;
+			private _padding = (_ctrlHeight_in_safeZoneH / _fontHeight_in_safeZoneH) / 2 - 1;
+			_ctrl2 ctrlSetFontHeight (safeZoneH * _fontHeight_in_safeZoneH);
 			_ctrl2Text = parseText (format ["<t size='%1'>&#160;</t><br/><t size='1' align='center'> STOP  ANIMATION</t>", _padding]);
 		};
 		
@@ -139,10 +140,10 @@ animHUD_createItem = {
 			_ctrl2Width = _ctrlWidth;
 			_ctrl2Heigth = _ctrlHeigth;
 
-			private _ctrlHeightInSFH = _ctrl2Heigth / safeZoneH;
-			private _fontHeightInSFH = 1 / 30;
-			private _padding = (_ctrlHeightInSFH / _fontHeightInSFH) / 2 - 2;
-			_ctrl2 ctrlSetFontHeight (safeZoneH * _fontHeightInSFH);
+			private _ctrlHeight_in_safeZoneH = _ctrl2Heigth / safeZoneH;
+			private _fontHeight_in_safeZoneH = 1 / 30;
+			private _padding = (_ctrlHeight_in_safeZoneH / _fontHeight_in_safeZoneH) / 2 - 2;
+			_ctrl2 ctrlSetFontHeight (safeZoneH * _fontHeight_in_safeZoneH);
 			_ctrl2Text = parseText (format ["<t size='%2'>&#160;</t><br/><t size='1' align='center'>%1</t>", _ctrl2Text, _padding]);
 		};
 		// элементы самих анимок
@@ -226,15 +227,17 @@ animHUD_createItem = {
 			_ctrl2Y = _ctrlY;
 
 			// текст почти по центру
-			private _ctrlHeightInSFH = _ctrl2Heigth / safeZoneH;
-			private _fontHeightInSFH = 1 / 30;
-			private _padding = (_ctrlHeightInSFH / _fontHeightInSFH) - 2;
+			private _ctrlHeight_in_safeZoneH = _ctrl2Heigth / safeZoneH;
+			private _fontHeight_in_safeZoneH = 1 / 30;
+			private _padding = (_ctrlHeight_in_safeZoneH / _fontHeight_in_safeZoneH) - 2;
 
-			_ctrl2 ctrlSetFontHeight (safeZoneH * _fontHeightInSFH);
+			_ctrl2 ctrlSetFontHeight (safeZoneH * _fontHeight_in_safeZoneH);
 			_ctrl2Text = ["", _index + 1] select (_index < 32);
 			_ctrl2Text = parseText (format ["<t size='%2'>&#160;</t><br/><t size='1' align='center'>%1</t>", _ctrl2Text, _padding]);
 		};
 	};
+
+	hint str [_ctrlWidth, _ctrlHeigth];
 
 	_ctrl_bg ctrlSetPosition [_ctrlX, _ctrlY, _ctrlWidth, _ctrlHeigth];
 	_ctrl_bg ctrlSetText _ctrlPicture;
