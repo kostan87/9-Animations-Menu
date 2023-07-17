@@ -53,7 +53,7 @@ animHUD = {
 		[1] call animHUD_createItem;
 	};
 
-	for "_i" from 1 to 4 do {
+	for "_i" from 1 to 8 do {
 		[2] call animHUD_createItem;
 	};
 
@@ -168,33 +168,33 @@ animHUD_createItem = {
 				};
 				if (_index in [2,14,26]) exitWith {
 					_ctrlX = (safeZoneW - _ctrlWidth) / 2 + safeZoneX * 1.845;
-					_ctrlY = (safeZoneH -  _ctrlHeigth) / 2 + safeZoneY * 1.56;
+					_ctrlY = (safeZoneH -  _ctrlHeigth) / 2 + safeZoneY * 1.55;
 					_ctrlAngle = 315;
 				};
 				if (_index in [3,15,27]) exitWith {
 					_ctrlX = (safeZoneW - _ctrlWidth) / 2 + safeZoneX * 1.722;
-					_ctrlY = (safeZoneH -  _ctrlHeigth) / 2 + safeZoneY * 2.67;
+					_ctrlY = (safeZoneH -  _ctrlHeigth) / 2 + safeZoneY * 2.66;
 					_ctrlAngle = 337.5;
 				};
 				// 2
 				if (_index in [4,16,28]) exitWith {
-					_ctrlX = (safeZoneW - _ctrlWidth) / 2 + safeZoneX;
-					_ctrlY = (safeZoneH -  _ctrlHeigth) / 2 + safeZoneY;
-					_ctrlAngle = -1;
+					_ctrlX = (safeZoneW - _ctrlWidth) / 2 + safeZoneX * 1.487;
+					_ctrlY = (safeZoneH -  _ctrlHeigth) / 2 + safeZoneY * 3.51;
+					_ctrlAngle = 0;
 				};
 				if (_index in [5,17,29]) exitWith {
-					_ctrlX = (safeZoneW - _ctrlWidth) / 2 + safeZoneX;
-					_ctrlY = (safeZoneH -  _ctrlHeigth) / 2 + safeZoneY;
-					_ctrlAngle = 21.5;
+					_ctrlX = (safeZoneW - _ctrlWidth) / 2 + safeZoneX * 1.18;
+					_ctrlY = (safeZoneH -  _ctrlHeigth) / 2 + safeZoneY * 3.98;
+					_ctrlAngle = 22.5;
 				};
 				if (_index in [6,18,30]) exitWith {
-					_ctrlX = (safeZoneW - _ctrlWidth) / 2 + safeZoneX;
-					_ctrlY = (safeZoneH -  _ctrlHeigth) / 2 + safeZoneY;
+					_ctrlX = (safeZoneW - _ctrlWidth) / 2 + safeZoneX * 0.845;
+					_ctrlY = (safeZoneH -  _ctrlHeigth) / 2 + safeZoneY * 4;
 					_ctrlAngle = 45;
 				};
 				if (_index in [7,19,31]) exitWith {
-					_ctrlX = (safeZoneW - _ctrlWidth) / 2 + safeZoneX;
-					_ctrlY = (safeZoneH -  _ctrlHeigth) / 2 + safeZoneY;
+					_ctrlX = (safeZoneW - _ctrlWidth) / 2 + safeZoneX * 0.535;
+					_ctrlY = (safeZoneH -  _ctrlHeigth) / 2 + safeZoneY * 3.56;
 					_ctrlAngle = 67.5;
 				};
 				// 3
