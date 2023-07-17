@@ -1,7 +1,5 @@
 disableSerialization;
-
 waitUntil { !isNull findDisplay 46 }; 
-
 private _display = findDisplay 46;
 _display displayAddEventHandler ["KeyDown", {
 	if (
@@ -37,30 +35,30 @@ animHUD = {
 			localNamespace setVariable ["animHUD_display", displayNull];
 		}];
 	}];
-
 	localNamespace setVariable ["animHUD_invEH", _invEH];
+
 	localNamespace setVariable ["animHUD_display", _display];
 	localNamespace setVariable ["animHUD_items", [[],[],[]]];
-
-	// центральный элемент
-	[0] call animHUD_createItem;
-	_items = localNamespace getVariable "animHUD_items";
 	
+	// центральный элемент
+	[0, nil] call animHUD_createItem;
+	_items = localNamespace getVariable "animHUD_items";
+
 	// остальные элементы
 	_ctrl = _items # 0 # 0 # 0;
 	for "_i" from 1 to 4 do {
-		[1] call animHUD_createItem;
+		[1, _ctrl] call animHUD_createItem;
 	};
 	_ctrl = _items # 1 # 0 # 0;
 	for "_i" from 1 to 36 do {
-		[2] call animHUD_createItem;
+		[2, _ctrl] call animHUD_createItem;
 	};
 
 	[] spawn animHUD_setItemsData; // функционал элементов (кто надо становится видимым, другие скрываются)
 };
 
 animHUD_createItem = {
-	params ["_lvl"];
+	params ["_lvl", "_ctrlParent"];
 	private ["_ctrlWidth", "_ctrlHeigth", "_ctrlParentHeigth", "_ctrlX", "_ctrlY", "_ctrlPicture", "_ctrlAngle"];
 	private ["_ctrl2Width", "_ctrl2Heigth", "_ctrl2X", "_ctrl2Y", "_ctrl2Text"];
 
@@ -76,7 +74,7 @@ animHUD_createItem = {
 			_ctrlHeigth = _ctrlWidth * (safeZoneW/safeZoneH);
 			_ctrlParentHeigth = 0;
 			_ctrlX = (safeZoneW - _ctrlWidth) / 2 + safeZoneX;
-			_ctrlY = (safeZoneH -  _ctrlHeigth) / 2 + safeZoneY;
+			_ctrlY = (safeZoneH -  _ctrlHeigth) / 2 + safeZoneY - _ctrlParentHeigth * 0.8;
 			_ctrlPicture = "lvl1.paa";
 
 			_ctrl2Width = _ctrlWidth;
@@ -90,11 +88,11 @@ animHUD_createItem = {
 			_ctrl2 ctrlSetFontHeight (safeZoneH * _fontHeightInSFH);
 			_ctrl2Text = parseText (format ["<t size='%1'>&#160;</t><br/><t size='1' align='center'> STOP  ANIMATION</t>", _padding]);
 		};
-		
 		// подкатегории анимок
 		if (_lvl == 1) exitWith {
 			_ctrlWidth = 0.16 * safeZoneW;
 			_ctrlHeigth = _ctrlWidth * (4/3);
+			_ctrlParentHeigth = ctrlPosition _ctrlParent # 3;
 			_ctrlPicture = "lvl2.paa";
 
 			// поворот
@@ -102,7 +100,7 @@ animHUD_createItem = {
 			private _index = count (_items # 1);
 			call {
 				if (_index == 0) exitWith {
-					_ctrlX = (safeZoneH - _ctrlHeigth) / 2 + safeZoneY;
+					_ctrlX = (safeZoneH - _ctrlHeigth) / 2 + safeZoneY - _ctrlParentHeigth * 0.4;
 					_ctrlY = (safeZoneH - _ctrlHeigth) / 2 + safeZoneY;
 					_ctrlAngle = 270;
 
@@ -112,7 +110,7 @@ animHUD_createItem = {
 				};
 				if (_index == 1) exitWith {
 					_ctrlX = (safeZoneW - _ctrlWidth) / 2 + safeZoneX;
-					_ctrlY = (safeZoneH - _ctrlHeigth) / 2 + safeZoneY;
+					_ctrlY = (safeZoneH - _ctrlHeigth) / 2 + safeZoneY - _ctrlParentHeigth * 0.8;
 					_ctrlAngle = 0;
 
 					_ctrl2X =_ctrlX;
@@ -120,7 +118,7 @@ animHUD_createItem = {
 					_ctrl2Text = "2";
 				};
 				if (_index == 2) exitWith {
-					_ctrlX = (safeZoneH - _ctrlHeigth) / 2 + safeZoneY;
+					_ctrlX = (safeZoneH - _ctrlHeigth) / 2 + safeZoneY + _ctrlParentHeigth * 0.8;
 					_ctrlY = (safeZoneH - _ctrlHeigth) / 2 + safeZoneY;
 					_ctrlAngle = 90;
 
@@ -130,7 +128,7 @@ animHUD_createItem = {
 				};
 				if (_index == 3) exitWith {
 					_ctrlX = (safeZoneW - _ctrlWidth) / 2 + safeZoneX;
-					_ctrlY = (safeZoneH - _ctrlHeigth) / 2 + safeZoneY;
+					_ctrlY = (safeZoneH - _ctrlHeigth) / 2 + safeZoneY + _ctrlParentHeigth * 0.8;
 					_ctrlAngle = 180;
 
 					_ctrl2X =_ctrlX;
@@ -141,6 +139,7 @@ animHUD_createItem = {
 			_ctrl2Width = _ctrlWidth;
 			_ctrl2Heigth = _ctrlHeigth;
 
+			// текст почти по центру
 			private _ctrlHeightInSFH = _ctrl2Heigth / safeZoneH;
 			private _fontHeightInSFH = 1 / 30;
 			private _padding = (_ctrlHeightInSFH / _fontHeightInSFH) / 2 - 2;
@@ -151,6 +150,7 @@ animHUD_createItem = {
 		if (_lvl == 2) exitWith {
 			_ctrlWidth = 0.071 * safeZoneW;
 			_ctrlHeigth = _ctrlWidth * (4/3);
+			_ctrlParentHeigth = ctrlPosition _ctrlParent # 3;
 			_ctrlPicture = "lvl3.paa";
 
 			// поворот
@@ -159,65 +159,65 @@ animHUD_createItem = {
 			call {
 				// 1
 				if (_index in [0,12,24]) exitWith {
-					_ctrlX = (safeZoneW - _ctrlWidth) / 2 + safeZoneX;
-					_ctrlY = (safeZoneH -  _ctrlHeigth) / 2 + safeZoneY;
+					_ctrlX = (safeZoneW - _ctrlWidth) / 2 + safeZoneX + _ctrlParentHeigth * -0.58;
+					_ctrlY = (safeZoneH -  _ctrlHeigth) / 2 + safeZoneY + _ctrlParentHeigth * 0.51;
 					_ctrlAngle = 270;
 				};
 				if (_index in [1,13,25]) exitWith {
-					_ctrlX = (safeZoneW - _ctrlWidth) / 2 + safeZoneX;
-					_ctrlY = (safeZoneH -  _ctrlHeigth) / 2 + safeZoneY;
+					_ctrlX = (safeZoneW - _ctrlWidth) / 2 + safeZoneX + _ctrlParentHeigth * -0.68;
+					_ctrlY = (safeZoneH -  _ctrlHeigth) / 2 + safeZoneY + _ctrlParentHeigth * 0.184;
 					_ctrlAngle = 292.5;
 				};
 				if (_index in [2,14,26]) exitWith {
-					_ctrlX = (safeZoneW - _ctrlWidth) / 2 + safeZoneX;
-					_ctrlY = (safeZoneH -  _ctrlHeigth) / 2 + safeZoneY;
+					_ctrlX = (safeZoneW - _ctrlWidth) / 2 + safeZoneX + _ctrlParentHeigth * -0.68;
+					_ctrlY = (safeZoneH -  _ctrlHeigth) / 2 + safeZoneY + _ctrlParentHeigth * -0.168;
 					_ctrlAngle = 314;
 				};
 				if (_index in [3,15,27]) exitWith {
-					_ctrlX = (safeZoneW - _ctrlWidth) / 2 + safeZoneX;
-					_ctrlY = (safeZoneH -  _ctrlHeigth) / 2 + safeZoneY;
+					_ctrlX = (safeZoneW - _ctrlWidth) / 2 + safeZoneX + _ctrlParentHeigth * -0.58;
+					_ctrlY = (safeZoneH -  _ctrlHeigth) / 2 + safeZoneY + _ctrlParentHeigth * -0.49;
 					_ctrlAngle = 336.5;
 				};
 				// 2
 				if (_index in [4,16,28]) exitWith {
-					_ctrlX = (safeZoneW - _ctrlWidth) / 2 + safeZoneX;
-					_ctrlY = (safeZoneH -  _ctrlHeigth) / 2 + safeZoneY;
+					_ctrlX = (safeZoneW - _ctrlWidth) / 2 + safeZoneX + _ctrlParentHeigth * -0.385;
+					_ctrlY = (safeZoneH -  _ctrlHeigth) / 2 + safeZoneY + _ctrlParentHeigth * -0.76;
 					_ctrlAngle = -1;
 				};
 				if (_index in [5,17,29]) exitWith {
-					_ctrlX = (safeZoneW - _ctrlWidth) / 2 + safeZoneX;
-					_ctrlY = (safeZoneH -  _ctrlHeigth) / 2 + safeZoneY;
+					_ctrlX = (safeZoneW - _ctrlWidth) / 2 + safeZoneX + _ctrlParentHeigth * -0.141;
+					_ctrlY = (safeZoneH -  _ctrlHeigth) / 2 + safeZoneY + _ctrlParentHeigth * -0.9;
 					_ctrlAngle = 21.5;
 				};
 				if (_index in [6,18,30]) exitWith {
-					_ctrlX = (safeZoneW - _ctrlWidth) / 2 + safeZoneX;
-					_ctrlY = (safeZoneH -  _ctrlHeigth) / 2 + safeZoneY;
+					_ctrlX = (safeZoneW - _ctrlWidth) / 2 + safeZoneX + _ctrlParentHeigth * 0.126;
+					_ctrlY = (safeZoneH -  _ctrlHeigth) / 2 + safeZoneY + _ctrlParentHeigth * -0.902;
 					_ctrlAngle = 45;
 				};
 				if (_index in [7,19,31]) exitWith {
-					_ctrlX = (safeZoneW - _ctrlWidth) / 2 + safeZoneX;
-					_ctrlY = (safeZoneH -  _ctrlHeigth) / 2 + safeZoneY;
+					_ctrlX = (safeZoneW - _ctrlWidth) / 2 + safeZoneX + _ctrlParentHeigth * 0.37;
+					_ctrlY = (safeZoneH -  _ctrlHeigth) / 2 + safeZoneY + _ctrlParentHeigth * -0.77;
 					_ctrlAngle = 67.5;
 				};
 				// 3
 				if (_index in [8,20,32]) exitWith {
-					_ctrlX = (safeZoneW - _ctrlWidth) / 2 + safeZoneX;
-					_ctrlY = (safeZoneH - _ctrlHeigth) / 2 + safeZoneY;
+					_ctrlX = (safeZoneW - _ctrlWidth) / 2 + safeZoneX + _ctrlParentHeigth * 0.57;
+					_ctrlY = (safeZoneH - _ctrlHeigth) / 2 + safeZoneY + _ctrlParentHeigth * -0.51;
 					_ctrlAngle = 89;
 				};
 				if (_index in [9,21,33]) exitWith {
-					_ctrlX = (safeZoneW - _ctrlWidth) / 2 + safeZoneX;
-					_ctrlY = (safeZoneH - _ctrlHeigth) / 2 + safeZoneY;
+					_ctrlX = (safeZoneW - _ctrlWidth) / 2 + safeZoneX + _ctrlParentHeigth * 0.675;
+					_ctrlY = (safeZoneH - _ctrlHeigth) / 2 + safeZoneY + _ctrlParentHeigth * -0.185;
 					_ctrlAngle = 111.5;
 				};
 				if (_index in [10,22,34]) exitWith {
-					_ctrlX = (safeZoneW - _ctrlWidth) / 2 + safeZoneX;
-					_ctrlY = (safeZoneH - _ctrlHeigth) / 2 + safeZoneY;
+					_ctrlX = (safeZoneW - _ctrlWidth) / 2 + safeZoneX + _ctrlParentHeigth * 0.678;
+					_ctrlY = (safeZoneH - _ctrlHeigth) / 2 + safeZoneY + _ctrlParentHeigth * 0.165;
 					_ctrlAngle = 134;
 				};
 				if (_index in [11,23,35]) exitWith {
-					_ctrlX = (safeZoneW - _ctrlWidth) / 2 + safeZoneX ;
-					_ctrlY = (safeZoneH - _ctrlHeigth) / 2 + safeZoneY;
+					_ctrlX = (safeZoneW - _ctrlWidth) / 2 + safeZoneX + _ctrlParentHeigth * 0.578;
+					_ctrlY = (safeZoneH - _ctrlHeigth) / 2 + safeZoneY + _ctrlParentHeigth * 0.49;
 					_ctrlAngle = 156.5;
 				};
 			};
@@ -397,63 +397,6 @@ animHUD_setItemsData = {
 	}];
 };
 
-animHUD_getNearestItemIndex = { // функция получения индекса ближайшего к мыши элемента на определённом уровне
-	private _items = localNamespace getVariable "animHUD_items";
-	private _distances = [];
-	{
-		{
-			_ctrl = _x # 0;
-			_ctrlPos = ctrlPosition _ctrl;
-			_ctrlPos = [_ctrlPos # 0, _ctrlPos # 1] vectorAdd [(_ctrlPos # 2) / 2, (_ctrlPos # 3) / 2];
-			_distance = _ctrlPos vectorDistance getMousePosition;
-			_distances pushBack _distance;
-		} foreach _x;
-	} foreach _items;
-	_itemIndex = _distances find (selectMin _distances);
-	_itemIndex;
-};
-
-animHUD_doWithoutWeapons = { // функция выполнения кода с удалением оружия у игрока
-	params ["_code", "_args"];
-	// сохранение данных
-	private _weapons = weaponsItems player;
-	private _magazines = magazinesAmmo player;
-	private _currentWeaponState = player weaponState (currentWeapon player);
-	
-	{ player removeMagazineGlobal (_x # 0) } forEach _magazines; // удаление магазинов
-	{ player removeWeapon (_x # 0) } forEach _weapons; // удаление оружия
-	
-	player switchAction "AmovPercMstpSnonWnonDnon"; // выход из ступора
-
-	private _handle = [_args] spawn _code; // выплонение кода
-	waitUntil {sleep 1; scriptDone _handle || {!(localNamespace getVariable "animHUD_animRun")}};
-
-	player switchAction "AmovPercMstpSnonWnonDnon";// выход из ступора
-	
-	{ player addWeapon (_x # 0) } forEach _weapons; // добавление оружия
-	{ player addMagazine (_x # 0) } forEach _magazines; // добавление магазинов
-
-	// удаление стоковых обвесов
-	removeAllPrimaryWeaponItems player; 
-	removeAllSecondaryWeaponItems player;
-	removeAllHandgunItems player;
-	
-	{ player addWeaponItem [_x, _x # 4 # 0, true] } forEach _weapons; // добавление магазинов оружию
-	
-	{ // установка обвесов оружию
-		private _weapon = _x # 0;
-		private _magazine = _x # 4;
-		if (count _magazine > 0) then {
-			player setAmmo [_weapon, _magazine # 1];
-		};
-		{
-			player addWeaponItem [_weapon, _x, true];
-		} forEach _x;
-	} forEach _weapons;
-	
-	player selectWeapon (_currentWeaponState select [0, 3]); // выбор сохраннёного оружия
-};
-
 animHUD_setItemAnim = {
 	params ["_ctrl3Data", "_index"];
 	
@@ -606,4 +549,61 @@ animHUD_setItemAnim = {
 	if (_index < 32) then {
 		_ctrl3Data ctrlSetTooltip ((localNamespace getVariable "animHUD_animsData") # _index # 0);
 	};
+};
+
+animHUD_getNearestItemIndex = { // функция получения индекса ближайшего к мыши элемента на определённом уровне
+	private _items = localNamespace getVariable "animHUD_items";
+	private _distances = [];
+	{
+		{
+			_ctrl = _x # 0;
+			_ctrlPos = ctrlPosition _ctrl;
+			_ctrlPos = [_ctrlPos # 0, _ctrlPos # 1] vectorAdd [(_ctrlPos # 2) / 2, (_ctrlPos # 3) / 2];
+			_distance = _ctrlPos vectorDistance getMousePosition;
+			_distances pushBack _distance;
+		} foreach _x;
+	} foreach _items;
+	_itemIndex = _distances find (selectMin _distances);
+	_itemIndex;
+};
+
+animHUD_doWithoutWeapons = { // функция выполнения кода с удалением оружия у игрока
+	params ["_code", "_args"];
+	// сохранение данных
+	private _weapons = weaponsItems player;
+	private _magazines = magazinesAmmo player;
+	private _currentWeaponState = player weaponState (currentWeapon player);
+	
+	{ player removeMagazineGlobal (_x # 0) } forEach _magazines; // удаление магазинов
+	{ player removeWeapon (_x # 0) } forEach _weapons; // удаление оружия
+	
+	player switchAction "AmovPercMstpSnonWnonDnon"; // выход из ступора
+
+	private _handle = [_args] spawn _code; // выплонение кода
+	waitUntil {sleep 1; scriptDone _handle || {!(localNamespace getVariable "animHUD_animRun")}};
+
+	player switchAction "AmovPercMstpSnonWnonDnon";// выход из ступора
+	
+	{ player addWeapon (_x # 0) } forEach _weapons; // добавление оружия
+	{ player addMagazine (_x # 0) } forEach _magazines; // добавление магазинов
+
+	// удаление стоковых обвесов
+	removeAllPrimaryWeaponItems player; 
+	removeAllSecondaryWeaponItems player;
+	removeAllHandgunItems player;
+	
+	{ player addWeaponItem [_x, _x # 4 # 0, true] } forEach _weapons; // добавление магазинов оружию
+	
+	{ // установка обвесов оружию
+		private _weapon = _x # 0;
+		private _magazine = _x # 4;
+		if (count _magazine > 0) then {
+			player setAmmo [_weapon, _magazine # 1];
+		};
+		{
+			player addWeaponItem [_weapon, _x, true];
+		} forEach _x;
+	} forEach _weapons;
+	
+	player selectWeapon (_currentWeaponState select [0, 3]); // выбор сохраннёного оружия
 };

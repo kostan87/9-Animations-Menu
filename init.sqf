@@ -53,7 +53,7 @@ animHUD = {
 		[1] call animHUD_createItem;
 	};
 
-	for "_i" from 1 to 1 do {
+	for "_i" from 1 to 4 do {
 		[2] call animHUD_createItem;
 	};
 
@@ -148,8 +148,8 @@ animHUD_createItem = {
 			_ctrl2Text = parseText (format ["<t size='%2'>&#160;</t><br/><t size='1' align='center'>%1</t>", _ctrl2Text, _padding]);
 		};
 		case 2: { // элементы анимаций
-			_ctrlWidth = 0.07 * safeZoneW;
-			_ctrlHeigth = (0.07 * safeZoneH) * (getResolution # 4);
+			_ctrlWidth = 0.0962 * safeZoneW;
+			_ctrlHeigth = (0.0962 * safeZoneH) * (getResolution # 4);
 			_ctrlPicture = "lvl3.paa";
 
 			private _items = localNamespace getVariable "animHUD_items";
@@ -157,24 +157,24 @@ animHUD_createItem = {
 			call {
 				// 1
 				if (_index in [0,12,24]) exitWith {
-					_ctrlX = (safeZoneW - _ctrlWidth) / 2 + safeZoneX * 1.7;
-					_ctrlY = (safeZoneH -  _ctrlHeigth) / 2 + safeZoneY * -0.73;
+					_ctrlX = (safeZoneW - _ctrlWidth) / 2 + safeZoneX * 1.708;
+					_ctrlY = (safeZoneH -  _ctrlHeigth) / 2 + safeZoneY * -0.74;
 					_ctrlAngle = 270;
 				};
 				if (_index in [1,13,25]) exitWith {
-					_ctrlX = (safeZoneW - _ctrlWidth) / 2 + safeZoneX;
-					_ctrlY = (safeZoneH -  _ctrlHeigth) / 2 + safeZoneY;
+					_ctrlX = (safeZoneW - _ctrlWidth) / 2 + safeZoneX * 1.84;
+					_ctrlY = (safeZoneH -  _ctrlHeigth) / 2 + safeZoneY * 0.36;
 					_ctrlAngle = 292.5;
 				};
 				if (_index in [2,14,26]) exitWith {
-					_ctrlX = (safeZoneW - _ctrlWidth) / 2 + safeZoneX;
-					_ctrlY = (safeZoneH -  _ctrlHeigth) / 2 + safeZoneY;
-					_ctrlAngle = 314;
+					_ctrlX = (safeZoneW - _ctrlWidth) / 2 + safeZoneX * 1.845;
+					_ctrlY = (safeZoneH -  _ctrlHeigth) / 2 + safeZoneY * 1.56;
+					_ctrlAngle = 315;
 				};
 				if (_index in [3,15,27]) exitWith {
-					_ctrlX = (safeZoneW - _ctrlWidth) / 2 + safeZoneX;
-					_ctrlY = (safeZoneH -  _ctrlHeigth) / 2 + safeZoneY;
-					_ctrlAngle = 336.5;
+					_ctrlX = (safeZoneW - _ctrlWidth) / 2 + safeZoneX * 1.722;
+					_ctrlY = (safeZoneH -  _ctrlHeigth) / 2 + safeZoneY * 2.67;
+					_ctrlAngle = 337.5;
 				};
 				// 2
 				if (_index in [4,16,28]) exitWith {
@@ -239,6 +239,7 @@ animHUD_createItem = {
 	_ctrl_bg ctrlSetPosition [_ctrlX, _ctrlY, _ctrlWidth, _ctrlHeigth];
 	_ctrl_bg ctrlSetText _ctrlPicture;
 	_ctrl_bg ctrlSetFade 0.3;
+
 	_ctrl_bg ctrlCommit 0;
 	_ctrl_bg ctrlSetAngle [_ctrlAngle, 0.5, 0.5];
 
@@ -254,7 +255,7 @@ animHUD_createItem = {
 	_ctrl_text ctrlEnable false;
 	_ctrl_text ctrlShow false;
 
-	// добавление в общий массив менюшки массива элемента в виде [фон, текст]
+	// добавление элемента в общий массив в виде массива [фон, текст]
 	private _items = localNamespace getVariable ["animHUD_items", [[],[],[]]];
 	(_items # _lvl) pushBack [_ctrl_bg, _ctrl_text];
 	localNamespace setVariable ["animHUD_items", _items];
@@ -323,7 +324,7 @@ animHUD_setItemsData = {
 					_index = _index - 1;
 
 					{ (_x # 0) ctrlSetText "lvl2.paa"; } forEach (_items # 1); // снятие выделения
-					(_items # 1 # _index # 0) ctrlSetText "2lvl2-selected.paa"; // выделение выбранной
+					(_items # 1 # _index # 0) ctrlSetText "lvl2-selected.paa"; // выделение выбранной
 
 					// скрытие всех элементов анимок
 					{
@@ -349,7 +350,7 @@ animHUD_setItemsData = {
 				// элементы самих анимок
 				private "_section";
 				{
-					if (ctrlText (_x # 0) == "2lvl2-selected.paa") then {
+					if (ctrlText (_x # 0) == "lvl2-selected.paa") then {
 						_section = _forEachIndex;
 					};
 				} forEach (_items # 1);
