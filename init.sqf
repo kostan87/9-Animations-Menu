@@ -53,7 +53,7 @@ animHUD = {
 		[1] call animHUD_createItem;
 	};
 
-	for "_i" from 1 to 8 do {
+	for "_i" from 1 to 36 do {
 		[2] call animHUD_createItem;
 	};
 
@@ -199,24 +199,24 @@ animHUD_createItem = {
 				};
 				// 3
 				if (_index in [8,20,32]) exitWith {
-					_ctrlX = (safeZoneW - _ctrlWidth) / 2 + safeZoneX;
-					_ctrlY = (safeZoneH - _ctrlHeigth) / 2 + safeZoneY;
-					_ctrlAngle = 89;
+					_ctrlX = (safeZoneW - _ctrlWidth) / 2 + safeZoneX * 0.293;
+					_ctrlY = (safeZoneH - _ctrlHeigth) / 2 + safeZoneY * 2.73;
+					_ctrlAngle = 90;
 				};
 				if (_index in [9,21,33]) exitWith {
-					_ctrlX = (safeZoneW - _ctrlWidth) / 2 + safeZoneX;
-					_ctrlY = (safeZoneH - _ctrlHeigth) / 2 + safeZoneY;
-					_ctrlAngle = 111.5;
+					_ctrlX = (safeZoneW - _ctrlWidth) / 2 + safeZoneX * 0.157;
+					_ctrlY = (safeZoneH - _ctrlHeigth) / 2 + safeZoneY * 1.65;
+					_ctrlAngle = 112.5;
 				};
 				if (_index in [10,22,34]) exitWith {
-					_ctrlX = (safeZoneW - _ctrlWidth) / 2 + safeZoneX;
-					_ctrlY = (safeZoneH - _ctrlHeigth) / 2 + safeZoneY;
-					_ctrlAngle = 134;
+					_ctrlX = (safeZoneW - _ctrlWidth) / 2 + safeZoneX * 0.153;
+					_ctrlY = (safeZoneH - _ctrlHeigth) / 2 + safeZoneY * 0.46;
+					_ctrlAngle = 135;
 				};
 				if (_index in [11,23,35]) exitWith {
-					_ctrlX = (safeZoneW - _ctrlWidth) / 2 + safeZoneX ;
-					_ctrlY = (safeZoneH - _ctrlHeigth) / 2 + safeZoneY;
-					_ctrlAngle = 156.5;
+					_ctrlX = (safeZoneW - _ctrlWidth) / 2 + safeZoneX * 0.277;
+					_ctrlY = (safeZoneH - _ctrlHeigth) / 2 + safeZoneY * -0.65;
+					_ctrlAngle = 157.5;
 				};
 			};
 			
