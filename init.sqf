@@ -52,11 +52,10 @@ animHUD = {
 	for "_i" from 1 to 4 do {
 		[1] call animHUD_createItem;
 	};
-	/*
-	for "_i" from 1 to 36 do {
+
+	for "_i" from 1 to 1 do {
 		[2] call animHUD_createItem;
 	};
-	*/
 
 	[] spawn animHUD_setItemsData; // функционал элементов (кто надо становится видимым, другие скрываются)
 };
@@ -92,9 +91,9 @@ animHUD_createItem = {
 			_ctrl2 ctrlSetFontHeight (safeZoneH * _fontHeight_in_safeZoneH);
 			_ctrl2Text = parseText (format ["<t size='%1'>&#160;</t><br/><t size='1' align='center'>STOP  ANIMATION</t>", _padding]);
 		};
-		case 1: {
+		case 1: { // элементы категорий
 			_ctrlWidth = 0.15 * safeZoneW;
-			_ctrlHeigth = (0.12 * safeZoneW) * (getResolution # 4);
+			_ctrlHeigth = (0.15 * safeZoneH) * (getResolution # 4);
 			_ctrlPicture = "lvl2.paa";
 
 			private _items = localNamespace getVariable "animHUD_items";
@@ -148,19 +147,18 @@ animHUD_createItem = {
 			_ctrl2 ctrlSetFontHeight (safeZoneH * _fontHeight_in_safeZoneH);
 			_ctrl2Text = parseText (format ["<t size='%2'>&#160;</t><br/><t size='1' align='center'>%1</t>", _ctrl2Text, _padding]);
 		};
-		case 2: {
-			_ctrlWidth = 0.071 * safeZoneW;
-			_ctrlHeigth = _ctrlWidth * (4/3);
+		case 2: { // элементы анимаций
+			_ctrlWidth = 0.07 * safeZoneW;
+			_ctrlHeigth = (0.07 * safeZoneH) * (getResolution # 4);
 			_ctrlPicture = "lvl3.paa";
 
-			// поворот
 			private _items = localNamespace getVariable "animHUD_items";
 			private _index = count (_items # 2);
 			call {
 				// 1
 				if (_index in [0,12,24]) exitWith {
-					_ctrlX = (safeZoneW - _ctrlWidth) / 2 + safeZoneX;
-					_ctrlY = (safeZoneH -  _ctrlHeigth) / 2 + safeZoneY;
+					_ctrlX = (safeZoneW - _ctrlWidth) / 2 + safeZoneX * 1.7;
+					_ctrlY = (safeZoneH -  _ctrlHeigth) / 2 + safeZoneY * -0.73;
 					_ctrlAngle = 270;
 				};
 				if (_index in [1,13,25]) exitWith {
