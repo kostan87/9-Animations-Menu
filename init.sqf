@@ -288,6 +288,8 @@ animGUI_setItemsData = {
 
 	// обработка нажатия на элементы
 	private _display = localNamespace getVariable "animGUI_display";
+	// ТУТ БАГ!!! иногда вылетает неизвестная ошибка
+	// ввиду её редкости, долго пытался понять что её вызывает, но так и не понял как её отследить и исправить
 	_display displayAddEventHandler ["mouseButtonDown", {
 		if (_this # 1 == 0) then { // ЛКМ
 			[_this] spawn {
