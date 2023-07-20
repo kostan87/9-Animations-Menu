@@ -301,7 +301,7 @@ animGUI_setItemsData = {
 					if (localNamespace getVariable ["animGUI_animRun", false]) then {
 						[] spawn { // выход из ступора
 							player action ["SWITCHWEAPON",player,player,0];
-							player switchMove "Netu";
+							player switchMove "";
 							player setAnimSpeedCoef 1;
 
 							// удаление EH инвентаря
