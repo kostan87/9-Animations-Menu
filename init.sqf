@@ -44,6 +44,8 @@ animGUI = {
 	localNamespace setVariable ["animGUI_display", _display];
 	localNamespace setVariable ["animGUI_items", [[],[],[]]];
 	
+	// чтобы фон не перекрывал рабочие элементы - он создается первым отдельно
+
 	// создание фона
 	// центральный элемент
 	[0, 0, 1] call animGUI_createItem;
@@ -76,24 +78,31 @@ animGUI_createItem = { // функция создания элемента ме�
 	// lvl: 1 - центральная кнопка, 2 - подкатегории, 3 - анимки | elemID: 1 - фон, 2 - текст
 	params ["_lvl", "_index", "_elemID"];
 
-	private ["_ctrlWidth", "_ctrlHeigth", "_ctrlX", "_ctrlY", "_ctrlText", "_ctrlAngle"];
+	private ["_ctrlWidth", "_ctrlHeight", "_ctrlX", "_ctrlY", "_ctrlText", "_ctrlAngle"];
 
 	private _display = localNamespace getVariable "animGUI_display";
 	private _ctrl_type = ["RscPicture", "RscStructuredText"] select (_elemID - 1);
 	private _ctrl = _display ctrlCreate [_ctrl_type, -1];
 
+	// формула для ctlrY = (safeZoneH - (Выс.Элем.1 + Выс.Элем.2 + ... + Выс.Элем.N * Коэфф.)) / 2 + safeZoneY
+	// почему-то для всех разрешений сработала только она
+	// высота элементов для формулы
+	private _ctrlHeight_lvl1 = (0.105 * safeZoneH) * ((getResolution # 0) / (getResolution # 1));
+	private _ctrlHeight_lvl2 = (0.15 * safeZoneH) * ((getResolution # 0) / (getResolution # 1));
+	private _ctrlHeight_lvl3 = (0.0962 * safeZoneH) * ((getResolution # 0) / (getResolution # 1));
+
 	switch (_lvl) do {
 		case 0: { // центральный элемент
 			_ctrlWidth = 0.105 * safeZoneW;
-			_ctrlHeigth = (0.105 * safeZoneH) * (getResolution # 4);
+			_ctrlHeight = _ctrlHeight_lvl1;
 			_ctrlX = (safeZoneW - _ctrlWidth) / 2 + safeZoneX;
-			_ctrlY = (safeZoneH -  _ctrlHeigth) / 2 + safeZoneY;
+			_ctrlY = (safeZoneH - _ctrlHeight) / 2 + safeZoneY;
 
 			if (_elemID == 1) then {
 				_ctrlText = "lvl1.paa";
 			} else {
 				// текст по центру для разных разрешений
-				private _ctrlHeight_in_safeZoneH = _ctrlHeigth / safeZoneH;
+				private _ctrlHeight_in_safeZoneH = _ctrlHeight / safeZoneH;
 				private _fontHeight_in_safeZoneH = 1 / 30;
 				private _padding = (_ctrlHeight_in_safeZoneH / _fontHeight_in_safeZoneH) / 2 - 1;
 				_ctrl ctrlSetFontHeight (safeZoneH * _fontHeight_in_safeZoneH);
@@ -104,27 +113,27 @@ animGUI_createItem = { // функция создания элемента ме�
 		};
 		case 1: { // элементы категорий
 			_ctrlWidth = 0.15 * safeZoneW;
-			_ctrlHeigth = (0.15 * safeZoneH) * (getResolution # 4);
+			_ctrlHeight = _ctrlHeight_lvl2;
 
 			switch (_index) do {
 				case 0: {
-					_ctrlX = (safeZoneW - _ctrlWidth) / 2 + safeZoneX * 1.445;
-					_ctrlY = (safeZoneH - _ctrlHeigth) / 2 + safeZoneY;
+					_ctrlX = ((safeZoneW - _ctrlWidth) / 2) * 0.833 + safeZoneX;
+					_ctrlY = (safeZoneH - _ctrlHeight) / 2 + safeZoneY;
 					_ctrlAngle = 270;
 				};
 				case 1: {
 					_ctrlX = (safeZoneW - _ctrlWidth) / 2 + safeZoneX;
-					_ctrlY = (safeZoneH - _ctrlHeigth) / 2 + safeZoneY * 2.585;
+					_ctrlY = (safeZoneH - (_ctrlHeight + _ctrlHeight_lvl1 * 1.355)) / 2 + safeZoneY;
 					_ctrlAngle = 0;
 				};
 				case 2: {
-					_ctrlX = (safeZoneW - _ctrlWidth) / 2 + safeZoneX * 0.555;
-					_ctrlY = (safeZoneH - _ctrlHeigth) / 2 + safeZoneY;
+					_ctrlX = ((safeZoneW - _ctrlWidth) / 2) * 1.168 + safeZoneX;
+					_ctrlY = (safeZoneH - _ctrlHeight) / 2 + safeZoneY;
 					_ctrlAngle = 90;
 				};
 				case 3: {
 					_ctrlX = (safeZoneW - _ctrlWidth) / 2 + safeZoneX;
-					_ctrlY = (safeZoneH - _ctrlHeigth) / 2 + safeZoneY * -0.58;
+					_ctrlY = (safeZoneH + (_ctrlHeight + _ctrlHeight_lvl1 * -1.5)) / 2 + safeZoneY;
 					_ctrlAngle = 180;
 				};
 			};
@@ -138,8 +147,8 @@ animGUI_createItem = { // функция создания элемента ме�
 					_ctrlX = _ctrlX + _ctrlWidth / 2;
 					_padding = safeZoneH * 2.7;
 				} else {
-					_ctrlHeigth = _ctrlHeigth / 2;
-					_ctrlY = _ctrlY + _ctrlHeigth / 2;
+					_ctrlHeight = _ctrlHeight / 2;
+					_ctrlY = _ctrlY + _ctrlHeight / 2;
 					_padding = safeZoneH;
 				};
 
@@ -150,70 +159,70 @@ animGUI_createItem = { // функция создания элемента ме�
 		};
 		case 2: { // элементы анимаций
 			_ctrlWidth = 0.0962 * safeZoneW;
-			_ctrlHeigth = (0.0962 * safeZoneH) * (getResolution # 4);
+			_ctrlHeight = _ctrlHeight_lvl3;
 
 			call {
-				// 1
-				if (_index in [0,12,24]) exitWith {
-					_ctrlX = (safeZoneW - _ctrlWidth) / 2 + safeZoneX * 1.708;
-					_ctrlY = (safeZoneH -  _ctrlHeigth) / 2 + safeZoneY * -0.74;
+				// 1 - 4
+				if (_index in [0,12,24]) exitWith { // 1
+					_ctrlX = ((safeZoneW - _ctrlWidth) / 2) * 0.75 + safeZoneX;
+					_ctrlY = (safeZoneH - (_ctrlHeight + _ctrlHeight_lvl1 + _ctrlHeight_lvl2 * -1.74)) / 2 + safeZoneY;
 					_ctrlAngle = 270;
 				};
-				if (_index in [1,13,25]) exitWith {
-					_ctrlX = (safeZoneW - _ctrlWidth) / 2 + safeZoneX * 1.84;
-					_ctrlY = (safeZoneH -  _ctrlHeigth) / 2 + safeZoneY * 0.36;
+				if (_index in [1,13,25]) exitWith { // 2
+					_ctrlX = ((safeZoneW - _ctrlWidth) / 2) * 0.703 + safeZoneX;
+					_ctrlY = (safeZoneH - (_ctrlHeight + _ctrlHeight_lvl1 + _ctrlHeight_lvl2 * -1.079)) / 2 + safeZoneY;
 					_ctrlAngle = 292.5;
 				};
-				if (_index in [2,14,26]) exitWith {
-					_ctrlX = (safeZoneW - _ctrlWidth) / 2 + safeZoneX * 1.845;
-					_ctrlY = (safeZoneH -  _ctrlHeigth) / 2 + safeZoneY * 1.55;
+				if (_index in [2,14,26]) exitWith { // 3
+					_ctrlX = (safeZoneW - _ctrlWidth) / 2 * 0.701 + safeZoneX;
+					_ctrlY = (safeZoneH - (_ctrlHeight + _ctrlHeight_lvl1 + _ctrlHeight_lvl2 * -0.364)) / 2 + safeZoneY;
 					_ctrlAngle = 315;
 				};
-				if (_index in [3,15,27]) exitWith {
-					_ctrlX = (safeZoneW - _ctrlWidth) / 2 + safeZoneX * 1.722;
-					_ctrlY = (safeZoneH -  _ctrlHeigth) / 2 + safeZoneY * 2.66;
+				if (_index in [3,15,27]) exitWith { // 4
+					_ctrlX = (safeZoneW - _ctrlWidth) / 2 * 0.745 + safeZoneX;
+					_ctrlY = (safeZoneH - (_ctrlHeight + _ctrlHeight_lvl1 + _ctrlHeight_lvl2 * 0.3)) / 2 + safeZoneY;
 					_ctrlAngle = 337.5;
 				};
-				// 2
-				if (_index in [4,16,28]) exitWith {
-					_ctrlX = (safeZoneW - _ctrlWidth) / 2 + safeZoneX * 1.487;
-					_ctrlY = (safeZoneH -  _ctrlHeigth) / 2 + safeZoneY * 3.51;
+				// 5 - 8
+				if (_index in [4,16,28]) exitWith { // 5
+					_ctrlX = (safeZoneW - _ctrlWidth) / 2 * 0.828 + safeZoneX;
+					_ctrlY = (safeZoneH - (_ctrlHeight + _ctrlHeight_lvl1 + _ctrlHeight_lvl2 * 0.807)) / 2 + safeZoneY;
 					_ctrlAngle = 0;
 				};
-				if (_index in [5,17,29]) exitWith {
-					_ctrlX = (safeZoneW - _ctrlWidth) / 2 + safeZoneX * 1.18;
-					_ctrlY = (safeZoneH -  _ctrlHeigth) / 2 + safeZoneY * 3.98;
+				if (_index in [5,17,29]) exitWith { // 6
+					_ctrlX = (safeZoneW - _ctrlWidth) / 2 * 0.937 + safeZoneX;
+					_ctrlY = (safeZoneH - (_ctrlHeight + _ctrlHeight_lvl1 + _ctrlHeight_lvl2 * 1.093)) / 2 + safeZoneY;
 					_ctrlAngle = 22.5;
 				};
-				if (_index in [6,18,30]) exitWith {
-					_ctrlX = (safeZoneW - _ctrlWidth) / 2 + safeZoneX * 0.845;
-					_ctrlY = (safeZoneH -  _ctrlHeigth) / 2 + safeZoneY * 4;
+				if (_index in [6,18,30]) exitWith { // 7
+					_ctrlX = (safeZoneW - _ctrlWidth) / 2 * 1.056 + safeZoneX;
+					_ctrlY = (safeZoneH - (_ctrlHeight + _ctrlHeight_lvl1 + _ctrlHeight_lvl2 * 1.102)) / 2 + safeZoneY;
 					_ctrlAngle = 45;
 				};
-				if (_index in [7,19,31]) exitWith {
-					_ctrlX = (safeZoneW - _ctrlWidth) / 2 + safeZoneX * 0.535;
-					_ctrlY = (safeZoneH -  _ctrlHeigth) / 2 + safeZoneY * 3.56;
+				if (_index in [7,19,31]) exitWith { // 8
+					_ctrlX = (safeZoneW - _ctrlWidth) / 2 * 1.165 + safeZoneX;
+					_ctrlY = (safeZoneH - (_ctrlHeight + _ctrlHeight_lvl1 + _ctrlHeight_lvl2 * 0.832)) / 2 + safeZoneY;
 					_ctrlAngle = 67.5;
 				};
-				// 3
-				if (_index in [8,20,32]) exitWith {
-					_ctrlX = (safeZoneW - _ctrlWidth) / 2 + safeZoneX * 0.293;
-					_ctrlY = (safeZoneH - _ctrlHeigth) / 2 + safeZoneY * 2.73;
+				// 9 - 12
+				if (_index in [8,20,32]) exitWith { // 9
+					_ctrlX = (safeZoneW - _ctrlWidth) / 2 * 1.251 + safeZoneX;
+					_ctrlY = (safeZoneH - (_ctrlHeight + _ctrlHeight_lvl1 + _ctrlHeight_lvl2 * 0.335)) / 2 + safeZoneY;
 					_ctrlAngle = 90;
 				};
-				if (_index in [9,21,33]) exitWith {
-					_ctrlX = (safeZoneW - _ctrlWidth) / 2 + safeZoneX * 0.157;
-					_ctrlY = (safeZoneH - _ctrlHeigth) / 2 + safeZoneY * 1.65;
+				if (_index in [9,21,33]) exitWith { // 10
+					_ctrlX = (safeZoneW - _ctrlWidth) / 2 * 1.298 + safeZoneX;
+					_ctrlY = (safeZoneH - (_ctrlHeight + _ctrlHeight_lvl1 + _ctrlHeight_lvl2 * -0.321)) / 2 + safeZoneY;
 					_ctrlAngle = 112.5;
 				};
-				if (_index in [10,22,34]) exitWith {
-					_ctrlX = (safeZoneW - _ctrlWidth) / 2 + safeZoneX * 0.153;
-					_ctrlY = (safeZoneH - _ctrlHeigth) / 2 + safeZoneY * 0.46;
+				if (_index in [10,22,34]) exitWith { // 11
+					_ctrlX = (safeZoneW - _ctrlWidth) / 2 * 1.3 + safeZoneX;
+					_ctrlY = (safeZoneH - (_ctrlHeight + _ctrlHeight_lvl1 + _ctrlHeight_lvl2 * -1.026)) / 2 + safeZoneY;
 					_ctrlAngle = 135;
 				};
-				if (_index in [11,23,35]) exitWith {
-					_ctrlX = (safeZoneW - _ctrlWidth) / 2 + safeZoneX * 0.277;
-					_ctrlY = (safeZoneH - _ctrlHeigth) / 2 + safeZoneY * -0.65;
+				if (_index in [11,23,35]) exitWith { // 12
+					_ctrlX = (safeZoneW - _ctrlWidth) / 2 * 1.256 + safeZoneX;
+					_ctrlY = (safeZoneH - (_ctrlHeight + _ctrlHeight_lvl1 + _ctrlHeight_lvl2 * -1.694)) / 2 + safeZoneY;
 					_ctrlAngle = 157.5;
 				};
 			};
@@ -222,9 +231,9 @@ animGUI_createItem = { // функция создания элемента ме�
 				_ctrlText = "lvl3.paa";
 			} else {
 				_ctrlWidth = _ctrlWidth / 2;
-				_ctrlHeigth = _ctrlHeigth / 2;
+				_ctrlHeight = _ctrlHeight / 2;
 				_ctrlX = _ctrlX + _ctrlWidth / 2;
-				_ctrlY = _ctrlY + _ctrlHeigth / 2;
+				_ctrlY = _ctrlY + _ctrlHeight / 2;
 
 				private _padding = safeZoneH * 0.5;
 				_ctrlText = ["", str (_index + 1)] select (_index < 32);
@@ -235,7 +244,7 @@ animGUI_createItem = { // функция создания элемента ме�
 		};
 	};
 
-	_ctrl ctrlSetPosition [_ctrlX, _ctrlY, _ctrlWidth, _ctrlHeigth];
+	_ctrl ctrlSetPosition [_ctrlX, _ctrlY, _ctrlWidth, _ctrlHeight];
 	_ctrl ctrlCommit 0;
 
 	if (_elemID == 1) then {
