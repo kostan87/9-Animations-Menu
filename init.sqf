@@ -191,7 +191,7 @@ animGUI_createItem = { // функция создания элемента ме�
 				};
 				if (_index in [5,17,29]) exitWith { // 6
 					_ctrlX = (safeZoneW - _ctrlWidth) / 2 * 0.937 + safeZoneX;
-					_ctrlY = (safeZoneH - (_ctrlHeight + _ctrlHeight_lvl1 + _ctrlHeight_lvl2 * 1.093)) / 2 + safeZoneY;
+					_ctrlY = (safeZoneH - (_ctrlHeight + _ctrlHeight_lvl1 + _ctrlHeight_lvl2 * 1.092)) / 2 + safeZoneY;
 					_ctrlAngle = 22.5;
 				};
 				if (_index in [6,18,30]) exitWith { // 7
@@ -392,7 +392,8 @@ animGUI_setItemsData = {
 							"amovpercmstpslowwrfldnon",
 							"amovpercmstpsnonwnondnon",
 							"amovpknlmstpsraswrfldnon",
-							"amovpercmstpsraswlnrdnon_turnl"
+							"amovpercmstpsraswlnrdnon_turnl",
+							"amovpercmstpsoptwbindnon" // бинокль
 						]};
 						(findDisplay 46) displayRemoveEventHandler ["keyDown", _keyEH];
 						localNamespace setVariable ["animGUI_animRun", false];
@@ -414,6 +415,8 @@ animGUI_setItemAnim = {
 			player switchMove "Acts_JetsMarshallingClear_in";
 			sleep 3;
 			player action ["SWITCHWEAPON",player,player,0];
+			sleep 2;
+			player switchMove "";
 		}],
 		["Остановить", {
 			player playMove "Acts_Ambient_Defensive";
